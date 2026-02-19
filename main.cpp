@@ -657,7 +657,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
 
-
 	//モデル読み込み
 	//ModelData modelData = LoadObjFile("resources", "plane.obj");
 	ModelData modelData = LoadObjFile("resources", "axis.obj");
