@@ -14,6 +14,8 @@
 #include "WinApp.h"
 #include "DirectXCommon.h"
 #include"StringUtility.h"
+#include "SpriteCommon.h"
+#include "Sprite.h"
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -492,27 +494,33 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//ポインタ
 	WinApp* winApp = nullptr;
+	Input* input = nullptr;
+	DirectXCommon* dxCommon = nullptr;
+	SpriteCommon* spriteCommon = nullptr;
+
 	//WindowsAPIの初期化
 	winApp = new WinApp();
 	winApp->Initialize();
 
-	//ポインタ
-	DirectXCommon* dxCommon = nullptr;
-
-	//ポインタ
-	Input* input = nullptr;
 	//入力の初期化
 	input = new Input();
 	input->Initialize(winApp);
-	//入力の更新
-	input->Update();
 
 	//DirectXの初期化
 	dxCommon = new DirectXCommon();
 	dxCommon->Initialize(winApp);
 
+	//スプライト共通部の初期化
+	spriteCommon = new SpriteCommon;
+	spriteCommon->Initialize();
+
+	//スプライトの初期化
+	Sprite* sprite = new Sprite();
+	sprite->Initialize();
 
 
+	//入力の更新
+	input->Update();
 
 	Log(StringUtility::ConvertString(std::format(L"WSTRING{}\n", L"abc")));
 
@@ -968,6 +976,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//DirectX解放
 	delete dxCommon;
+	delete spriteCommon;
+	delete sprite;
 
 	return 0;
 }
