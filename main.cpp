@@ -516,20 +516,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//ModelData modelData = LoadObjFile("resources", "plane.obj");
 	ModelData modelData = LoadObjFile("resources", "axis.obj");
 
-	////頂点リソースを作る
-	//Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource =
-	//	dxCommon->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+	//頂点リソースを作る
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource =
+		dxCommon->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
 	
-	////頂点バッファビューを作成する
-	//D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-	//vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();//リソースの先頭のアドレスから使う
-	//vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());//使用するリソースのサイズは頂点のサイズ
-	//vertexBufferView.StrideInBytes = sizeof(VertexData);//１頂点あたりのサイズ
+	//頂点バッファビューを作成する
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();//リソースの先頭のアドレスから使う
+	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());//使用するリソースのサイズは頂点のサイズ
+	vertexBufferView.StrideInBytes = sizeof(VertexData);//１頂点あたりのサイズ
 
-	////頂点リソースにデータを書き込む
-	//VertexData* vertexData = nullptr;
-	//vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));//書き込むためのアドレスを取得
-	//std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+	//頂点リソースにデータを書き込む
+	VertexData* vertexData = nullptr;
+	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));//書き込むためのアドレスを取得
+	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 	
 	//マテリアル用のリソースを作る。今回はcolor１つ分のサイズを用意する
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = dxCommon->CreateBufferResource(sizeof(Material));
@@ -612,14 +612,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };//右下
 	//vertexDataSprite[5].texcoord = { 1.0f,1.0f };
 
-	vertexDataSprite[0].position = { 0.0f,360.0f,0.0f,1.0f };//左下
-	vertexDataSprite[0].texcoord = { 0.0f,1.0f };
-	vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };//左上
-	vertexDataSprite[1].texcoord = { 0.0f,0.0f };
-	vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };//右下
-	vertexDataSprite[2].texcoord = { 1.0f,1.0f };
-	vertexDataSprite[3].position = { 640.0f,0.0f,0.0f,1.0f };//右上
-	vertexDataSprite[3].texcoord = { 1.0f,0.0f };
+	//vertexDataSprite[0].position = { 0.0f,360.0f,0.0f,1.0f };//左下
+	//vertexDataSprite[0].texcoord = { 0.0f,1.0f };
+	//vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };//左上
+	//vertexDataSprite[1].texcoord = { 0.0f,0.0f };
+	//vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };//右下
+	//vertexDataSprite[2].texcoord = { 1.0f,1.0f };
+	//vertexDataSprite[3].position = { 640.0f,0.0f,0.0f,1.0f };//右上
+	//vertexDataSprite[3].texcoord = { 1.0f,0.0f };
 
 	//Sparite用のTransformationMatrix用のリソースを作る。Matrix4x4 １つ分のサイズを用意する
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceSprite = dxCommon->CreateBufferResource(/*device,*/ sizeof(Matrix4x4));
@@ -633,22 +633,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//CPUで動かす用のTransformを作る
 	Transform transformSprite{ {1.0f,1.0f,1.0f},{ 0.0f,0.0f,0.0f },{0.0f,0.0f,0.0f} };
 
-	////頂点インデックス
-	//Microsoft::WRL::ComPtr<ID3D12Resource>  indexResourceSprite = dxCommon->CreateBufferResource(sizeof(uint32_t) * 6);
-	//D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
+	//頂点インデックス
+	Microsoft::WRL::ComPtr<ID3D12Resource>  indexResourceSprite = dxCommon->CreateBufferResource(sizeof(uint32_t) * 6);
+	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
 	
-	////リソースの先頭のアドレスから使う
-	//indexBufferViewSprite.BufferLocation = indexResourceSprite->GetGPUVirtualAddress();
-	////使用するリソースのサイズはインデックス６つ分のサイズ
-	//indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
-	////インデックスはuint32_tとする
-	//indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
+	//リソースの先頭のアドレスから使う
+	indexBufferViewSprite.BufferLocation = indexResourceSprite->GetGPUVirtualAddress();
+	//使用するリソースのサイズはインデックス６つ分のサイズ
+	indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
+	//インデックスはuint32_tとする
+	indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
 
-	////インデックスリソースにデータを書き込む
-	//uint32_t* indexDataSprite = nullptr;
-	//indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
-	//indexDataSprite[0] = 0; indexDataSprite[1] = 1; indexDataSprite[2] = 2;
-	//indexDataSprite[3] = 1; indexDataSprite[4] = 3; indexDataSprite[5] = 2;
+	//インデックスリソースにデータを書き込む
+	uint32_t* indexDataSprite = nullptr;
+	/*indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
+	indexDataSprite[0] = 0; indexDataSprite[1] = 1; indexDataSprite[2] = 2;
+	indexDataSprite[3] = 1; indexDataSprite[4] = 3; indexDataSprite[5] = 2;*/
 
 	BYTE key[256]{};
 	BYTE prekey[256]{};
