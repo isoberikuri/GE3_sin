@@ -208,6 +208,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
 	//バッファリソース内のデータを示すポインタ
 	Material* materialData = nullptr;
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
 
 	//座標返還行列データ
 	struct TransformationMatrix
@@ -219,5 +220,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceSprite;
 	//バッファリソース内のデータを示すポインタ
 	TransformationMatrix* transforMatrixData = nullptr;
+
+	Transform transform;
 
 };
