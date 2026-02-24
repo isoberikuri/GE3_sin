@@ -105,11 +105,11 @@ void SpriteCommon::CreateGraphicsPipelineState()
 	//RasiterZerStateの設定
 	D3D12_RASTERIZER_DESC rasterizeDesc{};
 	//裏面（時計周り）を表示しない
-	//rasterizeDesc.CullMode = D3D12_CULL_MODE_BACK;
+	rasterizeDesc.CullMode = D3D12_CULL_MODE_NONE;
 	//三角形の中を塗りつぶす
 	rasterizeDesc.FillMode = D3D12_FILL_MODE_SOLID;
 	//裏面表示
-	rasterizeDesc.CullMode = D3D12_CULL_MODE_NONE;
+	//rasterizeDesc.CullMode = D3D12_CULL_MODE_NONE;
 
 	//shaderをコンバイルする
 	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob =
