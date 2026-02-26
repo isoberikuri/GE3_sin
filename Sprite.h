@@ -24,6 +24,11 @@ public:
 
 private:
 	SpriteCommon* spriteCommon_ = nullptr;
+	MyMath::Transform transform;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU{};
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU{};
+	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource;
 
 	//頂点データ
 	struct VertexData
@@ -56,10 +61,6 @@ private:
 	//バッファリソース内のデータを示すポインタ
 	Material* materialData = nullptr;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU{};
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU{};
-	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource;
-
 	//座標返還行列データ
 	struct TransformationMatrix
 	{
@@ -70,7 +71,5 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceSprite;
 	//バッファリソース内のデータを示すポインタ
 	TransformationMatrix* transforMatrixData = nullptr;
-
-	MyMath::Transform transform;
 
 };
