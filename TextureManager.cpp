@@ -10,7 +10,8 @@ uint32_t TextureManager::kSRVIndexTop = 1;
 
 TextureManager* TextureManager::GetInstance()
 {
-	if (instance == nullptr) {
+	if (instance == nullptr)
+	{
 		instance = new TextureManager();
 	}
 	return instance;
@@ -35,12 +36,14 @@ void TextureManager::LoadTexture(const std::string& filePath)
 	ID3D12Device* device = dxCommon_->GetDevice();
 
 	// 読み込み済みテキスチャを検索
-	auto it = std::find_if(
+	auto it = std::find_if
+	(
 		textureDatas.begin(),
 		textureDatas.end(),
 		[&](const TextureData& texturedata) { return texturedata.filePath == filePath; }
 	);
-	if (it != textureDatas.end()) {
+	if (it != textureDatas.end())
+	{
 		// 読み込み済みなら早期return
 		return;
 	}
@@ -51,21 +54,25 @@ void TextureManager::LoadTexture(const std::string& filePath)
 
 	DirectX::ScratchImage image{};
 	std::wstring filePathW = StringUtility::ConvertString(filePath);
-	HRESULT hr = DirectX::LoadFromWICFile(
+	HRESULT hr = DirectX::LoadFromWICFile
+	(
 		filePathW.c_str(),
 		DirectX::WIC_FLAGS_FORCE_SRGB,
 		nullptr,
-		image);
+		image
+	);
 	assert(SUCCEEDED(hr));
 
 	DirectX::ScratchImage mipImage{};
-	hr = DirectX::GenerateMipMaps(
+	hr = DirectX::GenerateMipMaps
+	(
 		image.GetImages(),
 		image.GetImageCount(),
 		image.GetMetadata(),
 		DirectX::TEX_FILTER_SRGB,
 		0,
-		mipImage);
+		mipImage
+	);
 	assert(SUCCEEDED(hr));
 
 	//ミップマップ付きのデータを返す
