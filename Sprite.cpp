@@ -10,6 +10,10 @@ void Sprite::Initialize(SpriteCommon* spriteCommon, std::string textureFilePath)
 	this->spriteCommon_ = spriteCommon;
 	DirectXCommon* dxCommon = spriteCommon_->GetDxCommon();
 
+	TextureManager::GetInstance()->LoadTexture(textureFilePath);
+	// 単位行列を書き込んでおく
+	textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
+
 	vertexResource = dxCommon->CreateBufferResource(sizeof(VertexData) * 6);
 	//頂点バッファビューを作成する
 	vertexBufferViewSprite.BufferLocation = vertexResource->GetGPUVirtualAddress();//リソースの先頭のアドレスから使う
@@ -70,7 +74,7 @@ void Sprite::Initialize(SpriteCommon* spriteCommon, std::string textureFilePath)
 
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 	textureResource = dxCommon->CreateTextureResource(metadata);
-	dxCommon->UploadTextureData(textureResource, mipImages);
+	//dxCommon->UploadTextureData(textureResource, mipImages);
 
 	//metaDataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -95,9 +99,6 @@ void Sprite::Initialize(SpriteCommon* spriteCommon, std::string textureFilePath)
 	////単位行列を書きこんでおく
 	//transforMatrixData->WVP = MyMath::MakeIdentity4x4();
 	//transforMatrixData->World = MyMath::MakeIdentity4x4();
-
-	// 単位行列を書き込んでおく
-	textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
 
 }
 
@@ -147,7 +148,8 @@ void Sprite::Draw()
 	dxCommon->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBNを設定
 	dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-	dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureIndex));
+	D3D12_GPU_DESCRIPTOR_HANDLE textureHanlde = TextureManager::GetInstance()->GetSrvHandleGPU(textureIndex);
+	dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureHanlde);
 	//描画!(DrawCall/ドローコル）６個のインデックスを使用し１つのインスタンスを描画。その他は当面０で良い
 	dxCommon->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 

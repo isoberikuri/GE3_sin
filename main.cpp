@@ -214,6 +214,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	// テキスチャマネージャの初期化
 	TextureManager::GetInstance()->Initialize(dxCommon);
 
+	std::vector<std::string>textures =
+	{
+		"resources/uvChecker.png",
+	//	"resources/monsterball.png"
+	};
+	for (const std::string& texPath : textures)
+	{
+		TextureManager::GetInstance()->LoadTexture(texPath);
+	}
+
 	Log(StringUtility::ConvertString(std::format(L"WSTRING{}\n", L"abc")));
 
 	//モデル読み込み
@@ -267,7 +277,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureResouce = dxCommon->CreateTextureResource(metadata);
-	dxCommon->UploadTextureData(textureResouce, mipImages);
+	//dxCommon->UploadTextureData(textureResouce, mipImages);
 
 	//metaDataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -344,14 +354,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	LPDIRECTINPUT8 directInput = nullptr;
 	LPDIRECTINPUTDEVICE8 keyboard = nullptr;
 
-	std::vector<std::string> texFiles =
+	/*std::vector<std::string> texFiles =
 	{
 		"resources/uvChecker.png",
 		"resources/monsterBall.png",
 		"resources/uvChecker.png",
 		"resources/monsterBall.png",
 		"resources/uvChecker.png"
-	};
+	};*/
 
 	//スプライト共通部の初期化
 	spriteCommon = new SpriteCommon;
@@ -362,10 +372,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	sprite->Initialize(spriteCommon, texFiles[]);*/
 
 	std::vector<Sprite*> sprites;
-	for (uint32_t i = 0; i < 5; ++i)
+	for (uint32_t i = 0; i < 1; ++i)
 	{
 		Sprite* sprite = new Sprite();
-		sprite->Initialize(spriteCommon, texFiles[i]);
+		std::string& textureFile = textures[i % 2];
+		sprite->Initialize(spriteCommon, textureFile);
 		float x_position = 100.0f + 150.0f * i;
 		sprite->SetPosition({ x_position, 100.0f });
 		sprites.push_back(sprite);
@@ -393,19 +404,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			// 変更を反映する
 			sprite->SetPosition(position);
 
-			// 角度で変化させるテスト
-			float rotation = sprite->GetRotation();
-			rotation += 5.0f;
-			sprite->SetRotation(rotation);
+			//// 角度で変化させるテスト
+			//float rotation = sprite->GetRotation();
+			//rotation += 5.0f;
+			//sprite->SetRotation(rotation);
 
-			// 色を変化させるテスト
-			MyMath::Vector4 color = sprite->GetColor();
-			color.x += 0.01f;
-			if (color.x > 1.0f)
-			{
-				color.x -= 1.0f;
-			}
-			sprite->SetColor(color);
+			//// 色を変化させるテスト
+			//MyMath::Vector4 color = sprite->GetColor();
+			//color.x += 0.01f;
+			//if (color.x > 1.0f)
+			//{
+			//	color.x -= 1.0f;
+			//}
+			//sprite->SetColor(color);
 
 			// サイズを変化させるテスト
 			MyMath::Vector2 size = sprite->GetSize();

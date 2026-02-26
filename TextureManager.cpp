@@ -32,7 +32,7 @@ void TextureManager::Initialize(DirectXCommon* dxCommon)
 
 void TextureManager::LoadTexture(const std::string& filePath)
 {
-	//DirectXCommon* dxCommon = nullptr;
+	DirectXCommon* dxCommon = nullptr;
 	ID3D12Device* device = dxCommon_->GetDevice();
 
 	// 読み込み済みテキスチャを検索
