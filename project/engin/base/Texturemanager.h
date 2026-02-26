@@ -3,7 +3,7 @@
 #include <vector>
 #include <wrl.h>
 #include <d3d12.h>
-#include "externals/DirectXTex/DirectXTex.h"
+#include "../../externals/DirectXTex/DirectXTex.h"
 #include "DirectXCommon.h"
 
 //テクスチャマネージャー

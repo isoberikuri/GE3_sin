@@ -8,8 +8,8 @@
 #include <string>
 #include <cstdint>
 #include <thread>
-#include "externals/imgui/imgui_impl_dx12.h"
-#include "externals/DirectXTex/DirectXTex.h"
+#include "../../externals/DirectXTex/DirectXTex.h"
+#include "../../externals/DirectXTex/d3dx12.h"
 
 class WinApp;
 
