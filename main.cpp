@@ -368,67 +368,56 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		{
 			break;
 		}
+
+		//ゲームの処理
+
+		//Sprite用のWorldViewProjectionMatrixを作る
+		MyMath::Matrix4x4 worldMatrixSprite = MyMath::MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
+		MyMath::Matrix4x4 viewMatrixSprite = MyMath::MakeIdentity4x4();
+		MyMath::Matrix4x4 projectionMatrixSprite = MyMath::MakeOrthorgraphicMatrix(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f);
+		MyMath::Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worldMatrixSprite, Multiply(viewMatrixSprite, projectionMatrixSprite));
+		//*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
+
+		//フレームが始まる旨を告げる
+		ImGui_ImplDX12_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+
+		MyMath::Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+		MyMath::Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
+		MyMath::Matrix4x4 viewMatrix = Inverse(cameraMatrix);
+		MyMath::Matrix4x4 projectionMatrix = MyMath::MakePerspectiveFovMatrix(0.45f, float(WinApp::kClientWidth) / float(WinApp::kClientHeight), 0.1f, 100.0f);
+		MyMath::Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
+		transfomrationMatrixData->WVP = worldViewProjectionMatrix;
+		transfomrationMatrixData->World = worldMatrix;
+
+		//開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
+		ImGui::ShowDemoWindow();
+
+		ImGui::Begin("Settings");
+		ImGui::ColorEdit4("material", &materialData->x, ImGuiColorEditFlags_AlphaPreview);//RGBWの指定
+		ImGui::DragFloat3("rotate", &transform.rotate.x, 0.1f);
+		ImGui::DragFloat3("scale", &transform.scale.x, 0.1f);
+		ImGui::DragFloat3("translate", &transform.translate.x, 0.1f);
+		ImGui::Separator();
+		ImGui::End();
+
+		//ImGuiの内部コマンドを生成する
+		ImGui::Render();
 			
-			//数字の0キーが押されていたら
-			if (input->PushKey(DIK_0))
-			{
-				OutputDebugStringA("Hit 0\n");
-			}
+		//描画前処理
+		dxCommon->PreDraw();
 
-			//ゲームの処理
+		for (Sprite* sprite : sprites)
+		{
+			sprite->Draw();
+		}
 
-			//Sprite用のWorldViewProjectionMatrixを作る
-			MyMath::Matrix4x4 worldMatrixSprite = MyMath::MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
-			MyMath::Matrix4x4 viewMatrixSprite = MyMath::MakeIdentity4x4();
-			MyMath::Matrix4x4 projectionMatrixSprite = MyMath::MakeOrthorgraphicMatrix(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f);
-			MyMath::Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worldMatrixSprite, Multiply(viewMatrixSprite, projectionMatrixSprite));
-			//*transformationMatrixDataSprite = worldViewProjectionMatrixSprite;
-
-			//フレームが始まる旨を告げる
-			ImGui_ImplDX12_NewFrame();
-			ImGui_ImplWin32_NewFrame();
-			ImGui::NewFrame();
-
-			MyMath::Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-			MyMath::Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
-			MyMath::Matrix4x4 viewMatrix = Inverse(cameraMatrix);
-			MyMath::Matrix4x4 projectionMatrix = MyMath::MakePerspectiveFovMatrix(0.45f, float(WinApp::kClientWidth) / float(WinApp::kClientHeight), 0.1f, 100.0f);
-			MyMath::Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
-			transfomrationMatrixData->WVP = worldViewProjectionMatrix;
-			transfomrationMatrixData->World = worldMatrix;
-
-			//開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
-			ImGui::ShowDemoWindow();
-
-			ImGui::Begin("Settings");
-			ImGui::ColorEdit4("material", &materialData->x, ImGuiColorEditFlags_AlphaPreview);//RGBWの指定
-			ImGui::DragFloat3("rotate", &transform.rotate.x, 0.1f);
-			ImGui::DragFloat3("scale", &transform.scale.x, 0.1f);
-			ImGui::DragFloat3("translate", &transform.translate.x, 0.1f);
-			ImGui::Separator();
-			ImGui::End();
-
-
-			//transform.rotate.y += 0.03f;
-
-			//ImGuiの内部コマンドを生成する
-			ImGui::Render();
-			
-			//描画前処理
-			dxCommon->PreDraw();
-
-			for (Sprite* sprite : sprites)
-			{
-				sprite->Draw();
-			}
-
-			//実際のcommandListのImGuiの描画コマンドを積む
-			ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon->GetCommandList());
-
+		//実際のcommandListのImGuiの描画コマンドを積む
+		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon->GetCommandList());
 
 			//描画後処理
 		dxCommon->PostDraw();
-
 
 	}
 
