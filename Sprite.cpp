@@ -99,7 +99,6 @@ void Sprite::Initialize(SpriteCommon* spriteCommon)
 
 void Sprite::Update()
 {
-
 	//Sprite用のWorldViewProjectionMatrixを作る
 	MyMath::Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	MyMath::Matrix4x4 viewMatrix = MyMath::MakeIdentity4x4();
@@ -107,6 +106,30 @@ void Sprite::Update()
 	//Matrix4x4 worldViewProjectionMatrixSprite = Multiply(worldMatrixSprite, Multiply(viewMatrixSprite, projectionMatrixSprite));
 	transforMatrixData->WVP = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 	transforMatrixData->World = worldMatrix;
+
+	// メンバ変数の値を見た目に反映する処理
+	transform.translate = { position.x, position.y, 0.0f };
+	transform.rotate = { 0.0f, 0.0f, rotation };
+
+	// 頂点リソースにデータを書きこむ
+	// 左下
+	vertexData[0].position = { 0.0f, 1.0f, 0.0f, 1.0f };
+	vertexData[0].texcoord = { 0.0f, 1.0f };
+	vertexData[0].normal = { 0.0f, 0.0f, -1.0f };
+
+	vertexData[1].position = { 0.0f, 0.0f, 0.0f, 1.0f };
+	vertexData[1].texcoord = { 0.0f, 0.0f };
+	vertexData[1].normal = { 0.0f, 0.0f, -1.0f };
+
+	vertexData[2].position = { 1.0f, 1.0f, 0.0f, 1.0f };
+	vertexData[2].texcoord = { 1.0f, 1.0f };
+	vertexData[2].normal = { 0.0f, 0.0f, -1.0f };
+
+	vertexData[3].position = { 1.0f, 0.0f, 0.0f, 1.0f };
+	vertexData[3].texcoord = { 1.0f, 0.0f };
+	vertexData[3].normal = { 0.0f, 0.0f, -1.0f };
+
+	transform.scale = { size.x, size.y, 1.0f };
 
 }
 

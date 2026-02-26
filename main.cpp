@@ -348,6 +348,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Sprite* sprite = new Sprite();
 	sprite->Initialize(spriteCommon);
 
+	std::vector<Sprite*> sprites;
+	for (uint32_t i = 0; i < 5; ++i)
+	{
+		Sprite* sprite = new Sprite();
+		sprite->Initialize(spriteCommon);
+		float x_position = 100.0f + 150.0f * i;
+		sprite->SetPosition({ x_position, 100.0f });
+		sprites.push_back(sprite);
+	}
+
 	//------------------------------------------------------------------------------------------------------------------------------
 
 	//ウィンドウの×ボタンが押されるまでループ
@@ -355,7 +365,42 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	{
 		//入力の更新
 		input->Update();
-		sprite->Update();
+		
+		for (Sprite* sprite : sprites)
+		{
+			sprite->Update();
+
+			// 現在の座標を変数で受ける
+			MyMath::Vector2 position = sprite->GetPosition();
+			// 座標を変更する
+			//position += MyMath::Vector2{ 0.1f,0.1f };
+			position.x += 0.1f;
+			position.y += 0.1f;
+
+			// 変更を反映する
+			sprite->SetPosition(position);
+
+			// 角度で変化させるテスト
+			float rotation = sprite->GetRotation();
+			rotation += 5.0f;
+			sprite->SetRotation(rotation);
+
+			// 色を変化させるテスト
+			MyMath::Vector4 color = sprite->GetColor();
+			color.x += 0.01f;
+			if (color.x > 1.0f)
+			{
+				color.x -= 1.0f;
+			}
+			sprite->SetColor(color);
+
+			// サイズを変化させるテスト
+			MyMath::Vector2 size = sprite->GetSize();
+			size.x += 0.01f;
+			size.y += 0.01f;
+			sprite->SetSize(size);
+		}
+
 
 		////windowsのメッセージ処理
 		if (winApp->ProcessMessage())
@@ -414,7 +459,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			//描画前処理
 			dxCommon->PreDraw();
 
-			sprite->Draw();
+			for (Sprite* sprite : sprites)
+			{
+				sprite->Draw();
+			}
 
 
 
@@ -472,7 +520,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//DirectX解放
 	delete dxCommon;
 	delete spriteCommon;
-	delete sprite;
+	for (Sprite* sprite : sprites)
+	{
+		if (sprite)
+		{
+			delete sprite;
+		}
+	}
 
 	return 0;
 }
