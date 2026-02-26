@@ -29,6 +29,9 @@ public:
 
 	DirectXCommon* GetDxCommon() const { return dxCommon_; }
 
+	// メタデータを取得
+	const DirectX::TexMetadata& GetMetaData(uint32_t textureIndex);
+
 private:
 	static TextureManager* instance;
 
