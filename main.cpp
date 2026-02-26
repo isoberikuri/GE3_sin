@@ -234,17 +234,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource =
 		dxCommon->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
 	
-	////頂点バッファビューを作成する
-	//D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-	//vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();//リソースの先頭のアドレスから使う
-	//vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());//使用するリソースのサイズは頂点のサイズ
-	//vertexBufferView.StrideInBytes = sizeof(VertexData);//１頂点あたりのサイズ
-
-	////頂点リソースにデータを書き込む
-	////VertexData* vertexData = nullptr;
-	//vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));//書き込むためのアドレスを取得
-	//std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
-	
 	//マテリアル用のリソースを作る。今回はcolor１つ分のサイズを用意する
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = dxCommon->CreateBufferResource(sizeof(Material));
 	//マテリアルにデータを書き込む
@@ -270,30 +259,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	  {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 	MyMath::Transform cameraTransform{
 		{1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, -5.0f} };
-
-	//Textureを読んで転送する
-	//DirectX::ScratchImage mipImages = dxCommon->LoadTexture("resources/uvChecker.png");
-	//DirectX::ScratchImage mipImages = dxCommon->LoadTexture(modelData.material.textureFilePath);
-
-	//const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-	//Microsoft::WRL::ComPtr<ID3D12Resource> textureResouce = dxCommon->CreateTextureResource(metadata);
-	////dxCommon->UploadTextureData(textureResouce, mipImages);
-
-	////metaDataを基にSRVの設定
-	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	//srvDesc.Format = metadata.format;
-	//srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	//srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//２Dテクスチャ
-	//srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
-
-	////SRVを作成するDescriptorHeapの場所を決める
-	//D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = dxCommon->GetSRVCPUDescriptorHandle(1);
-	//D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = dxCommon->GetSRVGPUDescriptorHandle(1);
-	////先頭はImGuiが使っているのでその次を使う
-	///*textureSrvHandleCPU.ptr += dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	//textureSrvHandleGPU.ptr += dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);*/
-	////SRVの生成
-	//dxCommon->GetDevice()->CreateShaderResourceView(textureResouce.Get(), &srvDesc, textureSrvHandleCPU);
 
 
 	////Sprite用の頂点リソースを作る
@@ -331,46 +296,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	////CPUで動かす用のTransformを作る
 	MyMath::Transform transformSprite{ {1.0f,1.0f,1.0f},{ 0.0f,0.0f,0.0f },{0.0f,0.0f,0.0f} };
 
-	////頂点インデックス
-	//Microsoft::WRL::ComPtr<ID3D12Resource>  indexResourceSprite = dxCommon->CreateBufferResource(sizeof(uint32_t) * 6);
-	//D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
-	//
-	////リソースの先頭のアドレスから使う
-	//indexBufferViewSprite.BufferLocation = indexResourceSprite->GetGPUVirtualAddress();
-	////使用するリソースのサイズはインデックス６つ分のサイズ
-	//indexBufferViewSprite.SizeInBytes = sizeof(uint32_t) * 6;
-	////インデックスはuint32_tとする
-	//indexBufferViewSprite.Format = DXGI_FORMAT_R32_UINT;
-
-	////インデックスリソースにデータを書き込む
-	//uint32_t* indexDataSprite = nullptr;
-	//indexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
-	/*indexDataSprite[0] = 0; indexDataSprite[1] = 1; indexDataSprite[2] = 2;
-	indexDataSprite[3] = 1; indexDataSprite[4] = 3; indexDataSprite[5] = 2;*/
-
 	BYTE key[256]{};
 	BYTE prekey[256]{};
 
 	LPDIRECTINPUT8 directInput = nullptr;
 	LPDIRECTINPUTDEVICE8 keyboard = nullptr;
 
-	/*std::vector<std::string> texFiles =
-	{
-		"resources/uvChecker.png",
-		"resources/monsterBall.png",
-		"resources/uvChecker.png",
-		"resources/monsterBall.png",
-		"resources/uvChecker.png"
-	};*/
 
 	//スプライト共通部の初期化
 	spriteCommon = new SpriteCommon;
 	spriteCommon->Initialize(dxCommon);
 
 	//スプライトの初期化
-	/*Sprite* sprite = new Sprite();
-	sprite->Initialize(spriteCommon, texFiles[]);*/
-
 	std::vector<Sprite*> sprites;
 	for (uint32_t i = 0; i < 5; ++i)
 	{
@@ -404,19 +341,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			// 変更を反映する
 			sprite->SetPosition(position);
 
-			//// 角度で変化させるテスト
-			//float rotation = sprite->GetRotation();
-			//rotation += 5.0f;
-			//sprite->SetRotation(rotation);
+			// 角度で変化させるテスト
+			float rotation = sprite->GetRotation();
+			rotation += 5.0f;
+			sprite->SetRotation(rotation);
 
-			//// 色を変化させるテスト
-			//MyMath::Vector4 color = sprite->GetColor();
-			//color.x += 0.01f;
-			//if (color.x > 1.0f)
-			//{
-			//	color.x -= 1.0f;
-			//}
-			//sprite->SetColor(color);
+			// 色を変化させるテスト
+			MyMath::Vector4 color = sprite->GetColor();
+			color.x += 0.01f;
+			if (color.x > 1.0f)
+			{
+				color.x -= 1.0f;
+			}
+			sprite->SetColor(color);
 
 			// サイズを変化させるテスト
 			MyMath::Vector2 size = sprite->GetSize();
@@ -452,9 +389,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
 
-
-
-
 			MyMath::Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 			MyMath::Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 			MyMath::Matrix4x4 viewMatrix = Inverse(cameraMatrix);
@@ -464,7 +398,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			transfomrationMatrixData->World = worldMatrix;
 
 			//開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
-			//ImGui::ShowDemoWindow();
+			ImGui::ShowDemoWindow();
 
 			ImGui::Begin("Settings");
 			ImGui::ColorEdit4("material", &materialData->x, ImGuiColorEditFlags_AlphaPreview);//RGBWの指定
@@ -488,26 +422,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 				sprite->Draw();
 			}
 
-
-
-			//dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);//VBVを設定
-			//dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-			//dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transfomationMatrixResource->GetGPUVirtualAddress());
-			////SRVのDescriptorTableの先頭を設定。２はrootParameter[2]である。
-			//dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
-			////モデル描画
-			//dxCommon->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
-
-			//--------------------------------------
-
-			//Spriteの描画。変更が必要なものだけ変更する
-			//dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferViewSprite);//VBVを設定
-			//dxCommon->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBNを設定
-			//dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-
-			//描画!(DrawCall/ドローコル）６個のインデックスを使用し１つのインスタンスを描画。その他は当面０で良い
-			//dxCommon->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
-
 			//実際のcommandListのImGuiの描画コマンドを積む
 			ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon->GetCommandList());
 
@@ -517,10 +431,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 	}
-
-	//CloseHandle(fenceEvent);
-
-
 
 	//ImGuiの終了処理。詳細はさして重要ではないので解説は省略する。
 	//こういうもんである。初期化と逆順に行う
