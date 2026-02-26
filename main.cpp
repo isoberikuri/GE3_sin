@@ -13,7 +13,7 @@
 #include "Input.h"
 #include "WinApp.h"
 #include "DirectXCommon.h"
-#include"StringUtility.h"
+#include "StringUtility.h"
 #include "SpriteCommon.h"
 #include "Sprite.h"
 #include "MyMath.h"
