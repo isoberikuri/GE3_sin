@@ -16,7 +16,7 @@ class Sprite
 {
 public:
 
-	void Initialize(SpriteCommon* spriteCommon);
+	void Initialize(SpriteCommon* spriteCommon, std::string textureFilePath);
 
 	void Update();
 
@@ -38,6 +38,13 @@ public:
 	// サイズ
 	const MyMath::Vector2& GetSize() const { return size; }
 	void SetSize(const MyMath::Vector2& size) { this->size = size; }
+
+	uint32_t textureIndex = 0;
+
+	// getter
+	const MyMath::Vector2& GetAnchorPoint() const { return anchorPoint; }
+	// setter
+	void SetAnchorPoint(const MyMath::Vector2& anchorPoint) { this->anchorPoint = anchorPoint; }
 
 private:
 	SpriteCommon* spriteCommon_ = nullptr;
@@ -94,5 +101,5 @@ private:
 	float rotation = 0.0f;
 	// サイズ
 	MyMath::Vector2 size = { 100.0f, 100.0f };
-
+	MyMath::Vector2 anchorPoint = { 0.0f, 0.0f };
 };

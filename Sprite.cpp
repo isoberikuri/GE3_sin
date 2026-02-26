@@ -2,8 +2,9 @@
 #include "SpriteCommon.h"
 #include "DirectXCommon.h"
 #include "WinApp.h"
+#include "TextureManager.h"
 
-void Sprite::Initialize(SpriteCommon* spriteCommon)
+void Sprite::Initialize(SpriteCommon* spriteCommon, std::string textureFilePath)
 {
 	// 引数で受け取ってメンバ変数にする
 	this->spriteCommon_ = spriteCommon;
@@ -88,12 +89,15 @@ void Sprite::Initialize(SpriteCommon* spriteCommon)
 	dxCommon->GetDevice()->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
 
 	////Sparite用のTransformationMatrix用のリソースを作る。Matrix4x4 １つ分のサイズを用意する
-	//transformationMatrixResourceSprite = dxCommon->CreateBufferResource(/*device,*/ sizeof(Matrix4x4));
+	//transformationMatrixResourceSprite = dxCommon->CreateBufferResource(/*device,*/ sizeof(MyMath::Matrix4x4));
 	////書き込むためのアドレスを取得
 	//transformationMatrixResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&transforMatrixData));
 	////単位行列を書きこんでおく
-	//transforMatrixData->WVP = MakeIdentity4x4();
-	//transforMatrixData->World = MakeIdentity4x4();
+	//transforMatrixData->WVP = MyMath::MakeIdentity4x4();
+	//transforMatrixData->World = MyMath::MakeIdentity4x4();
+
+	// 単位行列を書き込んでおく
+	textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
 
 }
 
@@ -143,7 +147,7 @@ void Sprite::Draw()
 	dxCommon->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);//IBNを設定
 	dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
-	dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
+	dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureIndex));
 	//描画!(DrawCall/ドローコル）６個のインデックスを使用し１つのインスタンスを描画。その他は当面０で良い
 	dxCommon->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 

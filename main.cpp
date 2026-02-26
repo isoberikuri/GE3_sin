@@ -17,6 +17,7 @@
 #include "SpriteCommon.h"
 #include "Sprite.h"
 #include "MyMath.h"
+#include "TextureManager.h"
 
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -210,6 +211,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	dxCommon = new DirectXCommon();
 	dxCommon->Initialize(winApp);
 
+	// テキスチャマネージャの初期化
+	TextureManager::GetInstance()->Initialize(dxCommon);
+
 	Log(StringUtility::ConvertString(std::format(L"WSTRING{}\n", L"abc")));
 
 	//モデル読み込み
@@ -340,19 +344,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	LPDIRECTINPUT8 directInput = nullptr;
 	LPDIRECTINPUTDEVICE8 keyboard = nullptr;
 
+	std::vector<std::string> texFiles =
+	{
+		"resources/uvChecker.png",
+		"resources/monsterBall.png",
+		"resources/uvChecker.png",
+		"resources/monsterBall.png",
+		"resources/uvChecker.png"
+	};
+
 	//スプライト共通部の初期化
 	spriteCommon = new SpriteCommon;
 	spriteCommon->Initialize(dxCommon);
 
 	//スプライトの初期化
-	Sprite* sprite = new Sprite();
-	sprite->Initialize(spriteCommon);
+	/*Sprite* sprite = new Sprite();
+	sprite->Initialize(spriteCommon, texFiles[]);*/
 
 	std::vector<Sprite*> sprites;
 	for (uint32_t i = 0; i < 5; ++i)
 	{
 		Sprite* sprite = new Sprite();
-		sprite->Initialize(spriteCommon);
+		sprite->Initialize(spriteCommon, texFiles[i]);
 		float x_position = 100.0f + 150.0f * i;
 		sprite->SetPosition({ x_position, 100.0f });
 		sprites.push_back(sprite);
@@ -512,6 +525,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//WindowsAPIの終了処理
 	winApp->Finalize();
+
+	// テキスチャマネージャの終了
+	TextureManager::GetInstance()->Finalize();
 
 	//WindowsAPI解放
 	delete winApp;

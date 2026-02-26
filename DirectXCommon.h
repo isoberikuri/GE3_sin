@@ -96,7 +96,6 @@ public:
 		const std::wstring& filePath,
 		const wchar_t* profile
 	);
-
 	//=========================================//
 	//              リソースの生成             //
 	//=========================================//
@@ -104,6 +103,11 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 	void UploadTextureData(const Microsoft::WRL::ComPtr<ID3D12Resource>& texture, const DirectX::ScratchImage& mipImages);
 	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
+	//=========================================//
+	//      最大SRV数（最大テキスチャ枚数      //
+	//=========================================//
+	static const uint32_t kMaxSRVCount;
+	//void UploadTextureData(const Microsoft::WRL::ComPtr<ID3D12Resource>& texture, const DirectX::ScratchImage& mipImages);
 
 private://メンバ変数
 
